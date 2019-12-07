@@ -87,7 +87,7 @@ impl<'a> visit::Visitor<'a> for Builder<'a> {
                     .unwrap_or_else(|_| "".to_string())
             });
 
-        match item.node {
+        match item.kind {
             ast::ItemKind::Mod(_) => {
                 let name = item.ident.to_string();
                 {

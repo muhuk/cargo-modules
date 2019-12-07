@@ -19,7 +19,7 @@ use std::path;
 use std::process;
 
 use syntax::ast::{Crate, NodeId};
-use syntax::parse::{self, ParseSess};
+use syntax::sess::ParseSess;
 use syntax::source_map::{self, edition::Edition};
 use syntax::visit::Visitor;
 

@@ -1,6 +1,6 @@
 //! Graph generation AST traversal.
 use error::Error;
-use manifest::{ Target};
+use manifest::Target;
 use ng::graph::{Graph, GraphBuilder, Visibility, GLOB, SEP};
 use std::ffi::OsStr;
 use std::fs;
@@ -9,8 +9,9 @@ use std::path::PathBuf;
 use syntax::ast::{
     Attribute, Crate, Item, ItemKind, Mac, Mod, NodeId, UseTree, UseTreeKind, VisibilityKind,
 };
-use syntax::parse::{self, ParseSess};
-use syntax::source_map::{Symbol,FilePathMapping, SourceMap, Span, edition::Edition};
+use syntax::print::pprust::path_to_string;
+use syntax::sess::ParseSess;
+use syntax::source_map::{edition::Edition, FilePathMapping, SourceMap, Span, Symbol};
 use syntax::visit::{self, Visitor};
 
 const SOURCE_DIR: &str = "./src/";
@@ -39,9 +40,9 @@ impl<'a> Builder<'a> {
 
     fn add_use_tree(&mut self, prefix: &str, use_tree: &UseTree, visibility: Visibility) {
         let new_prefix = if prefix.len() > 0 {
-            [prefix, &use_tree.prefix.to_string()].join(SEP)
+            [prefix, &path_to_string(&use_tree.prefix)].join(SEP)
         } else {
-            use_tree.prefix.to_string()
+            path_to_string(&use_tree.prefix)
         };
 
         match use_tree.kind {
@@ -141,7 +142,7 @@ fn find_orphan_candidates(
 
 impl<'a> Visitor<'a> for Builder<'a> {
     fn visit_item(&mut self, item: &'a Item) {
-        match item.node {
+        match item.kind {
             ItemKind::Mod(_) => {
                 let path = self.path_str();
                 let name = item.ident.to_string();
